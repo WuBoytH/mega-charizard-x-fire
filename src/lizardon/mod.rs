@@ -12,6 +12,9 @@ pub unsafe extern "C" fn zard_set_flame(vtable: u64, fighter: *mut u64) {
     if !MEGAZARDX_SLOT[costume_slot] {
         return original!()(vtable, fighter);
     }
+    // if costume_slot != 6 {
+    //     return original!()(vtable, fighter);
+    // }
     EffectModule::kill_kind(boma, Hash40::new("plizardon_tail_fire"), true, true);
     EffectModule::req_follow(
         boma,
@@ -76,6 +79,9 @@ pub unsafe extern "C" fn zard_set_hide_flame(fighter: *mut u64) {
     if !MEGAZARDX_SLOT[costume_slot] {
         return original!()(fighter);
     }
+    // if costume_slot != 6 {
+    //     return original!()(fighter);
+    // }
     WorkModule::set_int(boma, 0, *FIGHTER_PLIZARDON_INSTANCE_WORK_ID_INT_TAIL_FIRE_EFFECT_HANDLE);
     EffectModule::kill_kind(boma, Hash40::new("plizardon_tail_fire"), true, true);
     EffectModule::req_follow(
