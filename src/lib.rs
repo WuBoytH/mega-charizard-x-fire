@@ -1,6 +1,5 @@
 #![feature(concat_idents)]
 #![feature(proc_macro_hygiene)]
-#![feature(asm)]
 
 pub static mut MEGAZARDX_SLOT : [bool; 8] = [false; 8];
 

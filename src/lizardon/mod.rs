@@ -32,8 +32,8 @@ pub unsafe extern "C" fn zard_set_flame(vtable: u64, fighter: *mut u64) {
         false,
         false
     );
-    let tail_fire_handle = EffectModule::get_last_handle(boma) as u32;
-    EffectModule::set_rgb(boma, tail_fire_handle, 0.015, 0.05, 5.0);
+    // let tail_fire_handle = EffectModule::get_last_handle(boma) as u32;
+    // EffectModule::set_rgb(boma, tail_fire_handle, 0.015, 0.05, 5.0);
     EffectModule::req_follow(
         boma,
         Hash40::new("plizardon_tail_fire"),
@@ -50,8 +50,8 @@ pub unsafe extern "C" fn zard_set_flame(vtable: u64, fighter: *mut u64) {
         false,
         false
     );
-    let mouth_fire_l = EffectModule::get_last_handle(boma) as u32;
-    EffectModule::set_rgb(boma, mouth_fire_l, 0.01, 0.05, 5.0);
+    // let mouth_fire_l = EffectModule::get_last_handle(boma) as u32;
+    // EffectModule::set_rgb(boma, mouth_fire_l, 0.01, 0.05, 5.0);
     EffectModule::req_follow(
         boma,
         Hash40::new("plizardon_tail_fire"),
@@ -68,8 +68,8 @@ pub unsafe extern "C" fn zard_set_flame(vtable: u64, fighter: *mut u64) {
         false,
         false
     );
-    let mouth_fire_r = EffectModule::get_last_handle(boma) as u32;
-    EffectModule::set_rgb(boma, mouth_fire_r, 0.01, 0.05, 5.0);
+    // let mouth_fire_r = EffectModule::get_last_handle(boma) as u32;
+    // EffectModule::set_rgb(boma, mouth_fire_r, 0.01, 0.05, 5.0);
 }
 
 #[skyline::hook(offset = 0xf93bf0)]
@@ -102,7 +102,7 @@ pub unsafe extern "C" fn zard_set_hide_flame(fighter: *mut u64) {
     );
     let tail_fire_handle = EffectModule::get_last_handle(boma) as u32;
     WorkModule::set_int(boma, tail_fire_handle as i32, *FIGHTER_PLIZARDON_INSTANCE_WORK_ID_INT_TAIL_FIRE_EFFECT_HANDLE);
-    EffectModule::set_rgb(boma, tail_fire_handle, 0.01, 0.05, 5.0);
+    // EffectModule::set_rgb(boma, tail_fire_handle, 0.01, 0.05, 5.0);
     EffectModule::req_follow(
         boma,
         Hash40::new("plizardon_tail_fire"),
@@ -120,7 +120,7 @@ pub unsafe extern "C" fn zard_set_hide_flame(fighter: *mut u64) {
         false
     );
     let mouth_fire_l = EffectModule::get_last_handle(boma) as u32;
-    EffectModule::set_rgb(boma, mouth_fire_l, 0.01, 0.05, 5.0);
+    // EffectModule::set_rgb(boma, mouth_fire_l, 0.01, 0.05, 5.0);
     EffectModule::req_follow(
         boma,
         Hash40::new("plizardon_tail_fire"),
@@ -138,7 +138,7 @@ pub unsafe extern "C" fn zard_set_hide_flame(fighter: *mut u64) {
         false
     );
     let mouth_fire_r = EffectModule::get_last_handle(boma) as u32;
-    EffectModule::set_rgb(boma, mouth_fire_r, 0.01, 0.05, 5.0);
+    // EffectModule::set_rgb(boma, mouth_fire_r, 0.01, 0.05, 5.0);
     if tail_fire_handle != 0
     && WorkModule::is_flag(boma, *FIGHTER_INSTANCE_WORK_ID_FLAG_SPYCLOAK) {
         if tail_fire_handle != 0 {
