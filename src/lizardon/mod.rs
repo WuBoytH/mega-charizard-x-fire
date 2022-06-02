@@ -1,18 +1,40 @@
-use smash::phx::Hash40;
-use smash::phx::Vector3f;
-use smash::lib::lua_const::*;
-use smash::app::*;
-use smash::app::lua_bind::*;
-use crate::MEGAZARDX_SLOT;
+use {
+    std::path::Path,
+    smash::{
+        phx::{Hash40, Vector3f},
+        app::{lua_bind::*, *},
+        lib::lua_const::*
+    },
+    once_cell::sync::Lazy
+};
+
+pub static MEGAZARD_SLOTS: Lazy<Vec<bool>> = Lazy::new(|| {
+    let base_path = Path::new("mods:/fighter/plizardon/model/body");
+    let mut vec = Vec::new();
+    let mut counter = 0;
+    loop {
+        let model_path = base_path.join(&format!("c{:02}", counter));
+        if model_path.exists() {
+            vec.push(model_path.join("zardx.marker").exists());
+        } else if counter < 8 {
+            vec.push(false)
+        } else {
+            break;
+        }
+        counter += 1;
+    }
+    vec
+});
 
 #[skyline::hook(offset = 0x34c8d30)]
-pub unsafe extern "C" fn zard_set_flame(vtable: u64, fighter: *mut u64) {
-    let boma = *fighter.add(4) as *mut BattleObjectModuleAccessor;
+pub unsafe extern "C" fn zard_set_flame(vtable: u64, fighter: &mut Fighter) {
+    let boma = fighter.battle_object.module_accessor;
     let costume_slot = WorkModule::get_int(boma, *FIGHTER_INSTANCE_WORK_ID_INT_COLOR) as usize;
-    if !MEGAZARDX_SLOT[costume_slot] {
+    Lazy::force(&MEGAZARD_SLOTS);
+    if !MEGAZARD_SLOTS[costume_slot] {
         return original!()(vtable, fighter);
     }
-    // if costume_slot != 6 {
+    // if costume_slot != 7 {
     //     return original!()(vtable, fighter);
     // }
     EffectModule::kill_kind(boma, Hash40::new("plizardon_tail_fire"), true, true);
@@ -73,13 +95,14 @@ pub unsafe extern "C" fn zard_set_flame(vtable: u64, fighter: *mut u64) {
 }
 
 #[skyline::hook(offset = 0xf93bf0)]
-pub unsafe extern "C" fn zard_set_hide_flame(fighter: *mut u64) {
-    let boma = *fighter.add(4) as *mut BattleObjectModuleAccessor;
+pub unsafe extern "C" fn zard_set_hide_flame(fighter: &mut Fighter) {
+    let boma = fighter.battle_object.module_accessor;
     let costume_slot = WorkModule::get_int(boma, *FIGHTER_INSTANCE_WORK_ID_INT_COLOR) as usize;
-    if !MEGAZARDX_SLOT[costume_slot] {
+    Lazy::force(&MEGAZARD_SLOTS);
+    if !MEGAZARD_SLOTS[costume_slot] {
         return original!()(fighter);
     }
-    // if costume_slot != 6 {
+    // if costume_slot != 7 {
     //     return original!()(fighter);
     // }
     WorkModule::set_int(boma, 0, *FIGHTER_PLIZARDON_INSTANCE_WORK_ID_INT_TAIL_FIRE_EFFECT_HANDLE);
