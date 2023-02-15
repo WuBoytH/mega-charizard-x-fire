@@ -1,27 +1,22 @@
 use {
-    std::path::Path,
+    std::collections::HashSet,
     smash::{
         phx::{Hash40, Vector3f},
         app::{lua_bind::*, *},
         lib::lua_const::*
     },
-    once_cell::sync::Lazy
+    once_cell::sync::Lazy,
+    walkdir::*
 };
 
-pub static MEGAZARD_SLOTS: Lazy<Vec<bool>> = Lazy::new(|| {
-    let base_path = Path::new("mods:/fighter/plizardon/model/body");
-    let mut vec = Vec::new();
-    let mut counter = 0;
-    loop {
-        let model_path = base_path.join(&format!("c{:02}", counter));
-        if model_path.exists() {
-            vec.push(model_path.join("zardx.marker").exists());
-        } else if counter < 8 {
-            vec.push(false)
-        } else {
-            break;
+pub static MEGAZARD_SLOTS: Lazy<HashSet<i32>> = Lazy::new(|| {
+    let mut vec = HashSet::new();
+    for x in WalkDir::new("mods:/fighter/plizardon/model/body").min_depth(1).into_iter().flatten() {
+        if x.file_type().is_file() && x.path().ends_with("zardx.marker") {
+            let str = x.path().to_str().unwrap().replace("/zardx.marker", "").replace("mods:/fighter/plizardon/model/body/c", "");
+            let num : i32 = str.parse().unwrap();
+            vec.insert(num);
         }
-        counter += 1;
     }
     vec
 });
@@ -29,9 +24,9 @@ pub static MEGAZARD_SLOTS: Lazy<Vec<bool>> = Lazy::new(|| {
 #[skyline::hook(offset = 0x34c8d30)]
 pub unsafe extern "C" fn zard_set_flame(vtable: u64, fighter: &mut Fighter) {
     let boma = fighter.battle_object.module_accessor;
-    let costume_slot = WorkModule::get_int(boma, *FIGHTER_INSTANCE_WORK_ID_INT_COLOR) as usize;
+    let costume_slot = WorkModule::get_int(boma, *FIGHTER_INSTANCE_WORK_ID_INT_COLOR);
     Lazy::force(&MEGAZARD_SLOTS);
-    if !MEGAZARD_SLOTS[costume_slot] {
+    if !MEGAZARD_SLOTS.contains(&costume_slot) {
         return original!()(vtable, fighter);
     }
     // if costume_slot != 7 {
@@ -97,9 +92,9 @@ pub unsafe extern "C" fn zard_set_flame(vtable: u64, fighter: &mut Fighter) {
 #[skyline::hook(offset = 0xf93bf0)]
 pub unsafe extern "C" fn zard_set_hide_flame(fighter: &mut Fighter) {
     let boma = fighter.battle_object.module_accessor;
-    let costume_slot = WorkModule::get_int(boma, *FIGHTER_INSTANCE_WORK_ID_INT_COLOR) as usize;
+    let costume_slot = WorkModule::get_int(boma, *FIGHTER_INSTANCE_WORK_ID_INT_COLOR);
     Lazy::force(&MEGAZARD_SLOTS);
-    if !MEGAZARD_SLOTS[costume_slot] {
+    if !MEGAZARD_SLOTS.contains(&costume_slot) {
         return original!()(fighter);
     }
     // if costume_slot != 7 {
