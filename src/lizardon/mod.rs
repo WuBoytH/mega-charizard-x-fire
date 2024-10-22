@@ -21,7 +21,7 @@ pub static MEGAZARD_SLOTS: Lazy<HashSet<i32>> = Lazy::new(|| {
     vec
 });
 
-#[skyline::hook(offset = 0x34c99b0)]
+#[skyline::hook(offset = 0x34c99d0)]
 pub unsafe extern "C" fn zard_set_flame(vtable: u64, fighter: &mut Fighter) {
     let boma = fighter.battle_object.module_accessor;
     let costume_slot = WorkModule::get_int(boma, *FIGHTER_INSTANCE_WORK_ID_INT_COLOR);
